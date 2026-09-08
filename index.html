@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>XSMB — Dự đoán hôm nay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #08081A;
+    --surface: #12122A;
+    --surface-2: #1a1a3a;
+    --cyan: #22D3EE;
+    --magenta: #FF2E97;
+    --purple: #A855F7;
+    --amber: #FFB020;
+    --green: #2BE38A;
+    --red: #FF3B5C;
+    --text: #F1F3FF;
+    --text-muted: #9AA0C3;
+    --glow: 0.5; /* 0 = off, 0.5 = nhe, 1 = dam, toggled via JS */
+    --font-display: 'Lora', serif;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100%;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background: perspective grid + two bloom glows, CSS-only (no photo asset). */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 12% 8%, color-mix(in oklch, var(--cyan) calc(28% * var(--glow)), transparent), transparent 45%),
+      radial-gradient(circle at 88% 82%, color-mix(in oklch, var(--magenta) calc(26% * var(--glow)), transparent), transparent 45%),
+      repeating-linear-gradient(0deg, rgba(140,150,220,0.05) 0px, rgba(140,150,220,0.05) 1px, transparent 1px, transparent 42px),
+      repeating-linear-gradient(90deg, rgba(140,150,220,0.05) 0px, rgba(140,150,220,0.05) 1px, transparent 1px, transparent 42px);
+    mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+    opacity: calc(0.5 + 0.5 * var(--glow));
+  }
+
+  /* Subtle grain to break up the flat gradients, matching the old "Grain/Noise" component. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  .font-display { font-family: var(--font-display); }
+
+  a { color: var(--cyan); }
+
+  /* ---------- Header ---------- */
+  header.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 40px);
+    letter-spacing: 0.02em;
+    color: var(--cyan);
+    text-shadow: 0 0 calc(18px * var(--glow)) color-mix(in oklch, var(--cyan) 70%, transparent);
+    animation: neon-flicker 1.6s ease-out 1;
+  }
+
+  @keyframes neon-flicker {
+    0%   { opacity: 0.2; }
+    8%   { opacity: 1; }
+    12%  { opacity: 0.3; }
+    18%  { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  .header-meta {
+    margin-top: 6px;
+    color: var(--text-muted);
+    font-size: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    align-items: center;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid color-mix(in oklch, var(--cyan) 45%, transparent);
+    background: color-mix(in oklch, var(--cyan) 10%, var(--surface));
+    color: var(--cyan);
+  }
+
+  .badge.warning {
+    border-color: color-mix(in oklch, var(--amber) 55%, transparent);
+    background: color-mix(in oklch, var(--amber) 12%, var(--surface));
+    color: var(--amber);
+    box-shadow: 0 0 calc(14px * var(--glow)) color-mix(in oklch, var(--amber) 50%, transparent);
+  }
+
+  .countdown { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 800; }
+
+  /* ---------- Neon toggle ---------- */
+  .neon-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 4px;
+  }
+  .neon-toggle span.label {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding-left: 8px;
+    font-weight: 700;
+  }
+  .neon-toggle button {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 6px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .neon-toggle button.active {
+    background: var(--cyan);
+    color: #041018;
+  }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 20px;
+  }
+
+  section { margin-bottom: 24px; }
+
+  h2 {
+    font-family: var(--font-body);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0 0 14px;
+  }
+
+  /* ---------- Top 3 ---------- */
+  .top3-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .top3-grid { grid-template-columns: 1fr; }
+  }
+
+  .rank-card {
+    position: relative;
+    text-align: center;
+    padding: 22px 16px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  }
+  .rank-card[data-rank="1"] {
+    border: 1px solid color-mix(in oklch, var(--magenta) 55%, transparent);
+    box-shadow: 0 0 calc(28px * var(--glow)) color-mix(in oklch, var(--magenta) 45%, transparent);
+  }
+  .rank-card[data-rank="2"] {
+    border: 1px solid color-mix(in oklch, var(--cyan) 55%, transparent);
+    box-shadow: 0 0 calc(22px * var(--glow)) color-mix(in oklch, var(--cyan) 40%, transparent);
+  }
+  .rank-card[data-rank="3"] {
+    border: 1px solid color-mix(in oklch, var(--purple) 55%, transparent);
+    box-shadow: 0 0 calc(22px * var(--glow)) color-mix(in oklch, var(--purple) 40%, transparent);
+  }
+
+  .rank-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .rank-card[data-rank="1"] .rank-label { color: var(--magenta); }
+  .rank-card[data-rank="2"] .rank-label { color: var(--cyan); }
+  .rank-card[data-rank="3"] .rank-label { color: var(--purple); }
+
+  .rank-number {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1.1;
+    margin: 6px 0 10px;
+    color: var(--text); /* solid, no glow on the digits themselves */
+  }
+
+  .prob-bar-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+    margin: 10px 0 8px;
+  }
+  .prob-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--cyan);
+  }
+  .rank-card[data-rank="1"] .prob-bar-fill { background: var(--magenta); }
+  .rank-card[data-rank="3"] .prob-bar-fill { background: var(--purple); }
+
+  .rank-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+  .rank-stats strong { color: var(--text); }
+
+  .ev-value.positive { color: var(--green); }
+  .ev-value.negative { color: var(--red); }
+
+  /* ---------- Dan 5 so ---------- */
+  .dan-card {
+    border: 1px solid color-mix(in oklch, var(--cyan) 25%, transparent);
+    box-shadow: 0 0 calc(20px * var(--glow)) color-mix(in oklch, var(--cyan) 18%, transparent);
+  }
+  .dan-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    max-width: 460px;
+  }
+  @media (max-width: 460px) {
+    .dan-grid { max-width: 100%; gap: 8px; }
+  }
+
+  .chip {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--surface-2);
+    border: 1px solid color-mix(in oklch, var(--cyan) 30%, transparent);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text); /* no glow on the digits */
+  }
+  .chip.top-1 { border: 2px solid var(--magenta); }
+  .chip.top-2 { border: 2px solid var(--cyan); }
+  .chip.top-3 { border: 2px solid var(--purple); }
+
+  /* ---------- Backtest / trust panel ---------- */
+  details.trust-panel summary {
+    cursor: pointer;
+    font-weight: 800;
+    color: var(--text);
+    list-style: none;
+  }
+  details.trust-panel summary::-webkit-details-marker { display: none; }
+  details.trust-panel summary::before {
+    content: "▸ ";
+    color: var(--text-muted);
+  }
+  details.trust-panel[open] summary::before { content: "▾ "; }
+  .trust-body {
+    margin-top: 14px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .trust-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 13px;
+  }
+  .trust-body th, .trust-body td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .trust-verdict {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: color-mix(in oklch, var(--amber) 10%, var(--surface));
+    border: 1px solid color-mix(in oklch, var(--amber) 35%, transparent);
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  /* ---------- Footer disclaimer ---------- */
+  footer.disclaimer {
+    margin-top: 32px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid color-mix(in oklch, var(--red) 35%, transparent);
+    background: color-mix(in oklch, var(--red) 8%, var(--surface));
+    color: color-mix(in oklch, var(--red) 70%, var(--text));
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* ---------- Empty state ---------- */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .empty-state h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  .empty-state code {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--cyan);
+  }
+
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main id="app">
+
+  <div id="empty-state" class="empty-state card" hidden>
+    <h1 class="font-display">Chưa có dữ liệu dự đoán</h1>
+    <p>Chạy lệnh sau để tạo <code>web/data/predictions.json</code>, rồi tải lại trang:</p>
+    <code>python -m xsmb.export_web</code>
+  </div>
+
+  <div id="content" hidden>
+    <header class="page-header">
+      <div>
+        <div class="wordmark">XSMB — Dự đoán hôm nay</div>
+        <div class="header-meta">
+          <span>Ngày quay: <strong id="target-date">—</strong></span>
+          <span>Quay lúc <strong>18:15</strong> giờ VN — còn <span class="countdown" id="countdown">—</span></span>
+          <span class="badge" id="data-badge">Dữ liệu đến: —</span>
+        </div>
+      </div>
+      <div class="neon-toggle" role="group" aria-label="Cường độ Neon">
+        <span class="label">Neon</span>
+        <button data-glow="0">Tắt</button>
+        <button data-glow="0.5">Nhẹ</button>
+        <button data-glow="1">Đậm</button>
+      </div>
+    </header>
+
+    <section>
+      <h2>Top 3 xác suất cao nhất</h2>
+      <div class="top3-grid" id="top3-grid"></div>
+    </section>
+
+    <section>
+      <div class="card dan-card">
+        <h2>Dàn 5 số hôm nay <span style="font-weight:400; text-transform:none; letter-spacing:normal;">— hạng 1-5 theo mô hình</span></h2>
+        <div class="dan-grid" id="dan-grid"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="card">
+        <details class="trust-panel" id="trust-panel">
+          <summary>Độ tin cậy mô hình (nên đọc trước khi tin số liệu)</summary>
+          <div class="trust-body" id="trust-body"></div>
+        </details>
+      </div>
+    </section>
+
+    <section>
+      <div class="card">
+        <details class="trust-panel" id="strategy-panel">
+          <summary>Giải thích các cách đặt tiền (nên đọc trước khi chọn cách chơi)</summary>
+          <div class="trust-body">
+            <p>Đây là 5 cách <em>đặt tiền</em> (staking) khác nhau cho cùng một cách chọn số — không
+            phải cách chọn số nào chính xác hơn. Số liệu ROI dưới mỗi cách là kết quả mô phỏng thật
+            trên dữ liệu XSMB 3 năm (2023–2026).</p>
+
+            <table>
+              <thead><tr><th>Cách chơi</th><th>Cách hoạt động</th><th>Rủi ro chính</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>Phẳng</strong></td>
+                  <td>Cược một số tiền cố định mỗi ngày, thắng hay thua cũng không đổi.</td>
+                  <td>Thấp nhất — biến động tiền cược = 0. Dễ kiểm soát vốn nhất.</td>
+                </tr>
+                <tr>
+                  <td><strong>Gấp khi thua</strong><br><span style="color:var(--text-muted)">(Martingale)</span></td>
+                  <td>Thua thì gấp đôi cược ngày kế tiếp; thắng thì quay về mức gốc. Ý tưởng: một lần
+                  thắng sẽ gỡ hết các lần thua trước.</td>
+                  <td>Chuỗi thua dài (rất hay gặp) khiến cược tăng theo cấp số nhân — vài ngày là
+                  chạm trần vốn hoặc giới hạn cược của nhà cái, mất trắng nhanh hơn cách phẳng nhiều lần.</td>
+                </tr>
+                <tr>
+                  <td><strong>Gấp khi thắng</strong><br><span style="color:var(--text-muted)">(Paroli)</span></td>
+                  <td>Ngược Martingale: thắng thì gấp đôi cược, thua thì về mức gốc. Ý tưởng: "chơi
+                  bằng tiền vừa thắng".</td>
+                  <td>Cược lớn nhất luôn rơi ngay trước một lần thua (vì vừa thắng liên tiếp) — một
+                  lần thua cuối chuỗi xoá sạch toàn bộ lãi tích luỹ.</td>
+                </tr>
+                <tr>
+                  <td><strong>Gấp thắng, chốt sau 3</strong></td>
+                  <td>Giống Paroli nhưng chủ động dừng gấp và chốt lời sau 3 lần thắng liên tiếp,
+                  về lại mức gốc.</td>
+                  <td>Giảm được rủi ro "mất sạch trong 1 ngày" so với Paroli thường, nhưng không đổi
+                  được kỳ vọng lãi/lỗ dài hạn.</td>
+                </tr>
+                <tr>
+                  <td><strong>Fibonacci</strong></td>
+                  <td>Tăng cược theo dãy Fibonacci (1,1,2,3,5,8,13,21…) mỗi khi thua; lùi lại 2 bước
+                  trong dãy khi thắng.</td>
+                  <td>Tăng chậm hơn Martingale nên "êm" hơn trong ngắn hạn, nhưng một chuỗi thua dài
+                  vẫn khiến cược phình to theo cùng cơ chế.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="trust-verdict">
+              Bằng chứng quyết định: đánh <strong>cả 100 số</strong> mỗi ngày (luôn trúng đúng 27 lần,
+              không còn yếu tố may rủi) — cả 5 cách đặt tiền trên đều cho ROI <strong>−6,1%</strong>,
+              giống nhau đến từng chữ số. Cách đặt tiền chỉ đổi <em>hình dạng</em> rủi ro (thắng nhỏ đều
+              đặn hay thắng lớn hiếm rồi mất sạch), <strong>không đổi được kỳ vọng lãi/lỗ dài hạn</strong> —
+              kỳ vọng chỉ phụ thuộc vào tỷ lệ số về (λ) và tỷ lệ ăn, cả hai đều nằm ngoài tầm kiểm soát
+              của cách đặt tiền.
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <footer class="disclaimer">
+      Xổ số là ngẫu nhiên. Công cụ này chỉ mang tính tham khảo/nghiên cứu, không phải lời khuyên tài chính.
+    </footer>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  const GLOW_KEY = "xsmb-glow";
+
+  function applyGlow(value) {
+    document.documentElement.style.setProperty("--glow", value);
+    document.querySelectorAll(".neon-toggle button").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.glow === String(value));
+    });
+    try { localStorage.setItem(GLOW_KEY, value); } catch (e) {}
+  }
+
+  function initNeonToggle() {
+    let saved = "0.5";
+    try { saved = localStorage.getItem(GLOW_KEY) || saved; } catch (e) {}
+    applyGlow(saved);
+    document.querySelectorAll(".neon-toggle button").forEach((btn) => {
+      btn.addEventListener("click", () => applyGlow(btn.dataset.glow));
+    });
+  }
+
+  function fmtPercent(x) { return (x * 100).toFixed(1) + "%"; }
+  function fmtVnd(x) {
+    const sign = x >= 0 ? "+" : "";
+    return sign + Math.round(x).toLocaleString("vi-VN") + "đ";
+  }
+  function pad2(n) { return String(n).padStart(2, "0"); }
+
+  function renderTop3(top3, baseline) {
+    const grid = document.getElementById("top3-grid");
+    grid.innerHTML = "";
+    const maxP = Math.max(...top3.map((r) => r.p), 0.01);
+    top3.forEach((r) => {
+      const el = document.createElement("div");
+      el.className = "rank-card card";
+      el.dataset.rank = r.rank;
+      const evClass = r.ev_per_point_vnd >= 0 ? "positive" : "negative";
+      el.innerHTML = `
+        <div class="rank-label">Hạng ${r.rank}</div>
+        <div class="rank-number font-display">${pad2(r.number)}</div>
+        <div class="prob-bar-track"><div class="prob-bar-fill" style="width:${(r.p / maxP) * 100}%"></div></div>
+        <div class="rank-stats">
+          <span>P(về≥1) <strong>${fmtPercent(r.p)}</strong></span>
+          <span>λ <strong>${r.lambda.toFixed(4)}</strong></span>
+        </div>
+        <div class="rank-stats" style="margin-top:6px;">
+          <span>EV/điểm <span class="ev-value ${evClass}"><strong>${fmtVnd(r.ev_per_point_vnd)}</strong></span></span>
+          <span>baseline λ ${baseline.lambda.toFixed(2)}</span>
+        </div>
+      `;
+      grid.appendChild(el);
+    });
+  }
+
+  function renderDan(dan) {
+    const grid = document.getElementById("dan-grid");
+    grid.innerHTML = "";
+    dan.forEach((entry) => {
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      if (entry.rank <= 3) chip.classList.add("top-" + entry.rank);
+      chip.textContent = pad2(entry.number);
+      chip.title = "Hạng " + entry.rank;
+      grid.appendChild(chip);
+    });
+  }
+
+  function renderTrust(backtest, economics, baseline) {
+    const body = document.getElementById("trust-body");
+    if (!backtest) {
+      body.innerHTML = `<p>Chưa có kết quả backtest. Chạy <code>python -m xsmb.backtest</code> để đánh giá mô hình trước khi tin số liệu.</p>`;
+      return;
+    }
+    const tp = backtest.test_period;
+    const modelRow = backtest.results.find((r) => r.name === "model_lambda");
+    const beatsRandom = modelRow.ci_diff_lo > 0;
+    const beatsHouse = (modelRow.mean_lambda_top3 - economics.breakeven_lambda) > 0 &&
+      (modelRow.ci_diff_lo + baseline.lambda) > economics.breakeven_lambda;
+    let rowsHtml = backtest.results.map((r) => `
+      <tr>
+        <td>${r.name}</td>
+        <td>${r.mean_lambda_top3.toFixed(4)}</td>
+        <td>[${r.ci_diff_lo.toFixed(4)}, ${r.ci_diff_hi.toFixed(4)}]</td>
+        <td>${(r.roi * 100).toFixed(1)}%</td>
+      </tr>`).join("");
+    body.innerHTML = `
+      <p>Backtest walk-forward ${tp.start.slice(0,10)} → ${tp.end.slice(0,10)} (${tp.n_days} ngày).
+      Baseline lý thuyết: λ=${baseline.lambda.toFixed(2)}, hoà vốn λ=${economics.breakeven_lambda.toFixed(4)}.</p>
+      <table>
+        <thead><tr><th>Phương pháp</th><th>λ trung bình top-3</th><th>CI 95% (so baseline)</th><th>ROI mô phỏng</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+      <div class="trust-verdict">
+        ${beatsRandom
+          ? (beatsHouse
+              ? "Mô hình vượt baseline và hoà vốn có ý nghĩa thống kê trong giai đoạn backtest này."
+              : "Mô hình có thể vượt baseline nhưng chưa vượt ngưỡng hoà vốn của nhà cái.")
+          : "Không phân biệt được với ngẫu nhiên trong giai đoạn backtest này (CI chứa 0) — đừng diễn giải số liệu như một lời hứa."}
+      </div>
+    `;
+  }
+
+  function startCountdown(targetDateIso, drawTime) {
+    const [hh, mm] = drawTime.split(":").map(Number);
+    const el = document.getElementById("countdown");
+    function tick() {
+      const now = new Date();
+      const target = new Date(targetDateIso + "T00:00:00+07:00");
+      target.setHours(hh, mm, 0, 0);
+      let diff = target - now;
+      if (diff < 0) diff = 0;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.textContent = `${h}h ${String(m).padStart(2,"0")}m ${String(s).padStart(2,"0")}s`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  function render(data) {
+    document.getElementById("empty-state").hidden = true;
+    document.getElementById("content").hidden = false;
+
+    document.getElementById("target-date").textContent = data.target_date;
+    startCountdown(data.target_date, data.draw_time);
+
+    const badge = document.getElementById("data-badge");
+    badge.textContent = "Dữ liệu đến: " + data.latest_data_date;
+    if (data.stale_data_warning) {
+      badge.classList.add("warning");
+      badge.title = data.stale_data_warning;
+    }
+
+    renderTop3(data.top3, data.baseline);
+    renderDan(data.dan);
+    renderTrust(data.backtest, data.economics, data.baseline);
+  }
+
+  function showEmptyState() {
+    document.getElementById("content").hidden = true;
+    document.getElementById("empty-state").hidden = false;
+  }
+
+  initNeonToggle();
+
+  fetch("./data/predictions.json", { cache: "no-store" })
+    .then((res) => { if (!res.ok) throw new Error("not found"); return res.json(); })
+    .then(render)
+    .catch(showEmptyState);
+})();
+</script>
+</body>
+</html>

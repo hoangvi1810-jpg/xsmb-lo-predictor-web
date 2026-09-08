@@ -1,0 +1,133 @@
+{
+  "generated_at": "2026-09-08T00:31:36.603061+07:00",
+  "target_date": "2026-09-08",
+  "draw_time": "18:15",
+  "now_vn": "2026-09-08T00:31:36.603061+07:00",
+  "latest_data_date": "2026-09-07",
+  "stale_data_warning": null,
+  "top3": [
+    {
+      "rank": 1,
+      "number": 77,
+      "lambda": 0.2776980996131897,
+      "p": 0.2414797842502594,
+      "ev_per_point_vnd": -784.15234375
+    },
+    {
+      "rank": 2,
+      "number": 93,
+      "lambda": 0.27695509791374207,
+      "p": 0.24224373698234558,
+      "ev_per_point_vnd": -843.591796875
+    },
+    {
+      "rank": 3,
+      "number": 52,
+      "lambda": 0.27579566836357117,
+      "p": 0.2400330752134323,
+      "ev_per_point_vnd": -936.345703125
+    }
+  ],
+  "dan": [
+    {
+      "rank": 1,
+      "number": 77
+    },
+    {
+      "rank": 2,
+      "number": 93
+    },
+    {
+      "rank": 3,
+      "number": 52
+    },
+    {
+      "rank": 4,
+      "number": 34
+    },
+    {
+      "rank": 5,
+      "number": 63
+    }
+  ],
+  "baseline": {
+    "lambda": 0.27,
+    "p": 0.23765728565289646
+  },
+  "economics": {
+    "point_price_vnd": 23000,
+    "payout_per_hit_vnd": 80000,
+    "breakeven_lambda": 0.2875
+  },
+  "backtest": {
+    "config": {
+      "since": "2010-01-01",
+      "test_days": 1095,
+      "window_len": 30,
+      "retrain_every": 30,
+      "point_price": 23000,
+      "payout_per_hit": 80000,
+      "breakeven_lambda": 0.2875,
+      "uniform_lambda": 0.27,
+      "uniform_p": 0.23765728565289646
+    },
+    "test_period": {
+      "start": "2023-08-26T00:00:00",
+      "end": "2026-09-05T00:00:00",
+      "n_days": 1095
+    },
+    "results": [
+      {
+        "name": "model_lambda",
+        "mean_lambda_top3": 0.27914764079147636,
+        "ci_diff_lo": -0.010030441400304457,
+        "ci_diff_hi": 0.028942161339421613,
+        "roi": -0.029051684203560517
+      },
+      {
+        "name": "empirical",
+        "mean_lambda_top3": 0.2764079147640791,
+        "ci_diff_lo": -0.011856925418569308,
+        "ci_diff_hi": 0.02376712328767121,
+        "roi": -0.03858116603798577
+      },
+      {
+        "name": "hot_30d",
+        "mean_lambda_top3": 0.273972602739726,
+        "ci_diff_lo": -0.013386605783866058,
+        "ci_diff_hi": 0.021933028919330244,
+        "roi": -0.04705181655747469
+      },
+      {
+        "name": "gan_overdue",
+        "mean_lambda_top3": 0.2706240487062405,
+        "ci_diff_lo": -0.016727549467275504,
+        "ci_diff_hi": 0.017062404870623993,
+        "roi": -0.05869896102177202
+      },
+      {
+        "name": "markov1",
+        "mean_lambda_top3": 0.25692541856925416,
+        "ci_diff_lo": -0.030730593607305956,
+        "ci_diff_hi": 0.004284627092846153,
+        "roi": -0.10634637019389849
+      },
+      {
+        "name": "uniform_random3",
+        "mean_lambda_top3": 0.2724505327245053,
+        "ci_diff_lo": -0.014901065449010709,
+        "ci_diff_hi": 0.018888888888888844,
+        "roi": -0.05234597313215538
+      }
+    ],
+    "calibration": [
+      {
+        "bin_lo": 0.2,
+        "bin_hi": 0.30000000000000004,
+        "mean_predicted_p": 0.238722952812774,
+        "observed_freq": 0.23800913242009133,
+        "count": 109500
+      }
+    ]
+  }
+}
