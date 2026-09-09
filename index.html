@@ -392,6 +392,7 @@
           <span>Ngày quay: <strong id="target-date">—</strong></span>
           <span>Quay lúc <strong>18:15</strong> giờ VN — còn <span class="countdown" id="countdown">—</span></span>
           <span class="badge" id="data-badge">Dữ liệu đến: —</span>
+          <span class="badge" id="fallback-badge" hidden>Nguồn dự phòng</span>
         </div>
       </div>
       <div class="neon-toggle" role="group" aria-label="Cường độ Neon">
@@ -623,6 +624,14 @@
     if (data.stale_data_warning) {
       badge.classList.add("warning");
       badge.title = data.stale_data_warning;
+    }
+
+    const fbBadge = document.getElementById("fallback-badge");
+    if (data.fallback_note) {
+      fbBadge.hidden = false;
+      fbBadge.title = data.fallback_note;
+    } else {
+      fbBadge.hidden = true;
     }
 
     renderTop3(data.top3, data.baseline);
