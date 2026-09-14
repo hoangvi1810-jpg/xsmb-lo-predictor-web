@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-14T23:58:36.841303+07:00",
+  "generated_at": "2026-09-15T01:53:35.816265+07:00",
   "target_date": "2026-09-15",
   "draw_time": "18:15",
-  "now_vn": "2026-09-14T23:58:36.841303+07:00",
+  "now_vn": "2026-09-15T01:53:35.816265+07:00",
   "latest_data_date": "2026-09-14",
   "stale_data_warning": null,
-  "fallback_note": "Da bo sung ket qua 2026-09-14 tu nguon du phong (minhngoc.net.vn).",
+  "fallback_note": null,
   "top3": [
     {
       "rank": 1,
@@ -17,9 +17,9 @@
     {
       "rank": 2,
       "number": 48,
-      "lambda": 0.27511414885520935,
+      "lambda": 0.27511411905288696,
       "p": 0.23916834592819214,
-      "ev_per_point_vnd": -990.8671875
+      "ev_per_point_vnd": -990.87109375
     },
     {
       "rank": 3,
