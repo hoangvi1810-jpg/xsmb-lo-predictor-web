@@ -1,54 +1,54 @@
 {
-  "generated_at": "2026-09-20T02:20:27.614463+07:00",
-  "target_date": "2026-09-20",
+  "generated_at": "2026-09-20T21:42:39.946172+07:00",
+  "target_date": "2026-09-21",
   "draw_time": "18:15",
-  "now_vn": "2026-09-20T02:20:27.614463+07:00",
-  "latest_data_date": "2026-09-19",
+  "now_vn": "2026-09-20T21:42:39.946172+07:00",
+  "latest_data_date": "2026-09-20",
   "stale_data_warning": null,
-  "fallback_note": null,
+  "fallback_note": "Da bo sung ket qua 2026-09-20 tu nguon du phong (minhngoc.net.vn).",
   "top3": [
     {
       "rank": 1,
-      "number": 24,
-      "lambda": 0.27449798583984375,
-      "p": 0.24102793633937836,
-      "ev_per_point_vnd": -1040.16015625
+      "number": 79,
+      "lambda": 0.2749716341495514,
+      "p": 0.24058538675308228,
+      "ev_per_point_vnd": -1002.26953125
     },
     {
       "rank": 2,
-      "number": 83,
-      "lambda": 0.274474173784256,
-      "p": 0.2392815500497818,
-      "ev_per_point_vnd": -1042.06640625
+      "number": 99,
+      "lambda": 0.2733563482761383,
+      "p": 0.2362189143896103,
+      "ev_per_point_vnd": -1131.4921875
     },
     {
       "rank": 3,
-      "number": 79,
-      "lambda": 0.2742499113082886,
-      "p": 0.2410786896944046,
-      "ev_per_point_vnd": -1060.0078125
+      "number": 83,
+      "lambda": 0.2732708156108856,
+      "p": 0.23824255168437958,
+      "ev_per_point_vnd": -1138.333984375
     }
   ],
   "dan": [
     {
       "rank": 1,
-      "number": 24
-    },
-    {
-      "rank": 2,
-      "number": 83
-    },
-    {
-      "rank": 3,
       "number": 79
     },
     {
+      "rank": 2,
+      "number": 99
+    },
+    {
+      "rank": 3,
+      "number": 83
+    },
+    {
       "rank": 4,
-      "number": 27
+      "number": 12
     },
     {
       "rank": 5,
-      "number": 75
+      "number": 39
     }
   ],
   "baseline": {
