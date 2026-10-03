@@ -1,32 +1,32 @@
 {
-  "generated_at": "2026-10-03T22:09:14.620737+07:00",
+  "generated_at": "2026-10-04T00:38:36.720989+07:00",
   "target_date": "2026-10-04",
   "draw_time": "18:15",
-  "now_vn": "2026-10-03T22:09:14.620737+07:00",
+  "now_vn": "2026-10-04T00:38:36.720989+07:00",
   "latest_data_date": "2026-10-03",
   "stale_data_warning": null,
-  "fallback_note": "Da bo sung ket qua 2026-10-03 tu nguon du phong (minhngoc.net.vn).",
+  "fallback_note": null,
   "top3": [
     {
       "rank": 1,
       "number": 41,
-      "lambda": 0.2759571969509125,
+      "lambda": 0.27595722675323486,
       "p": 0.2428375631570816,
-      "ev_per_point_vnd": -923.423828125
+      "ev_per_point_vnd": -923.421875
     },
     {
       "rank": 2,
       "number": 19,
       "lambda": 0.2752368152141571,
-      "p": 0.24095545709133148,
+      "p": 0.24095548689365387,
       "ev_per_point_vnd": -981.0546875
     },
     {
       "rank": 3,
       "number": 74,
-      "lambda": 0.2748071253299713,
+      "lambda": 0.2748070955276489,
       "p": 0.2425418347120285,
-      "ev_per_point_vnd": -1015.4296875
+      "ev_per_point_vnd": -1015.431640625
     }
   ],
   "dan": [
