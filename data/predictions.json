@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-08T05:00:43.122440+07:00",
-  "target_date": "2026-10-08",
+  "generated_at": "2026-10-09T00:53:15.104357+07:00",
+  "target_date": "2026-10-09",
   "draw_time": "18:15",
-  "now_vn": "2026-10-08T05:00:43.122440+07:00",
+  "now_vn": "2026-10-09T00:53:15.104357+07:00",
   "latest_data_date": "2026-10-07",
-  "stale_data_warning": null,
+  "stale_data_warning": "Data is 2 day(s) behind today (2026-10-09); latest available result is 2026-10-07. Refresh the dataset before trusting this prediction.",
   "fallback_note": null,
   "top3": [
     {
