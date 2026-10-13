@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-13T06:38:15.617142+07:00",
-  "target_date": "2026-10-13",
+  "generated_at": "2026-10-14T01:19:28.140197+07:00",
+  "target_date": "2026-10-14",
   "draw_time": "18:15",
-  "now_vn": "2026-10-13T06:38:15.617142+07:00",
+  "now_vn": "2026-10-14T01:19:28.140197+07:00",
   "latest_data_date": "2026-10-12",
-  "stale_data_warning": null,
+  "stale_data_warning": "Data is 2 day(s) behind today (2026-10-14); latest available result is 2026-10-12. Refresh the dataset before trusting this prediction.",
   "fallback_note": null,
   "top3": [
     {
@@ -24,9 +24,9 @@
     {
       "rank": 3,
       "number": 75,
-      "lambda": 0.2749621868133545,
+      "lambda": 0.2749621570110321,
       "p": 0.236745685338974,
-      "ev_per_point_vnd": -1003.025390625
+      "ev_per_point_vnd": -1003.02734375
     }
   ],
   "dan": [
