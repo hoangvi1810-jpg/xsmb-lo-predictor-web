@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-11-16T04:51:49.898143+07:00",
-  "target_date": "2026-11-16",
+  "generated_at": "2026-11-17T04:02:18.488867+07:00",
+  "target_date": "2026-11-17",
   "draw_time": "18:15",
-  "now_vn": "2026-11-16T04:51:49.898143+07:00",
+  "now_vn": "2026-11-17T04:02:18.488867+07:00",
   "latest_data_date": "2026-11-15",
-  "stale_data_warning": null,
+  "stale_data_warning": "Data is 2 day(s) behind today (2026-11-17); latest available result is 2026-11-15. Refresh the dataset before trusting this prediction.",
   "fallback_note": null,
   "top3": [
     {
       "rank": 1,
       "number": 12,
-      "lambda": 0.27641230821609497,
+      "lambda": 0.2764122784137726,
       "p": 0.24083010852336884,
-      "ev_per_point_vnd": -887.015625
+      "ev_per_point_vnd": -887.017578125
     },
     {
       "rank": 2,
