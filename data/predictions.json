@@ -1,32 +1,32 @@
 {
-  "generated_at": "2026-11-18T02:51:46.342405+07:00",
+  "generated_at": "2026-11-18T04:55:31.255490+07:00",
   "target_date": "2026-11-18",
   "draw_time": "18:15",
-  "now_vn": "2026-11-18T02:51:46.342405+07:00",
-  "latest_data_date": "2026-11-16",
-  "stale_data_warning": "Data is 2 day(s) behind today (2026-11-18); latest available result is 2026-11-16. Refresh the dataset before trusting this prediction.",
+  "now_vn": "2026-11-18T04:55:31.255490+07:00",
+  "latest_data_date": "2026-11-17",
+  "stale_data_warning": null,
   "fallback_note": null,
   "top3": [
     {
       "rank": 1,
       "number": 12,
-      "lambda": 0.2773421108722687,
-      "p": 0.2414046823978424,
-      "ev_per_point_vnd": -812.630859375
+      "lambda": 0.27459537982940674,
+      "p": 0.2394707351922989,
+      "ev_per_point_vnd": -1032.369140625
     },
     {
       "rank": 2,
-      "number": 4,
-      "lambda": 0.27580058574676514,
-      "p": 0.23829448223114014,
-      "ev_per_point_vnd": -935.953125
+      "number": 32,
+      "lambda": 0.2742669880390167,
+      "p": 0.23532716929912567,
+      "ev_per_point_vnd": -1058.640625
     },
     {
       "rank": 3,
-      "number": 32,
-      "lambda": 0.27511346340179443,
-      "p": 0.23678834736347198,
-      "ev_per_point_vnd": -990.923828125
+      "number": 48,
+      "lambda": 0.2737460434436798,
+      "p": 0.23792456090450287,
+      "ev_per_point_vnd": -1100.31640625
     }
   ],
   "dan": [
@@ -36,19 +36,19 @@
     },
     {
       "rank": 2,
-      "number": 4
-    },
-    {
-      "rank": 3,
       "number": 32
     },
     {
+      "rank": 3,
+      "number": 48
+    },
+    {
       "rank": 4,
-      "number": 14
+      "number": 4
     },
     {
       "rank": 5,
-      "number": 26
+      "number": 65
     }
   ],
   "baseline": {
